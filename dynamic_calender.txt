@@ -1,0 +1,62 @@
+public void EffectiveDateSelection() throws InterruptedException {
+        action.scrollToElement(Submission_Page.PolicyEffectiveDate).build().perform();
+        String PolicyEffectiveDate = Submission_Page.PolicyEffectiveDate.getAttribute("value");
+        String[] DefaulteffDate = PolicyEffectiveDate.split("/");
+        String DefaulteffMonth = DefaulteffDate[0];
+        String DefaulteffYear = DefaulteffDate[2];
+        String InEffectiveDate = props.getProperty("PolicyEffectiveDate");
+        String[] IneffDate = InEffectiveDate.split("/");
+        String InputeffMonth = IneffDate[0];
+        String InputeffDate = IneffDate[1];
+        String InputeffYear = IneffDate[2];
+        int Defdate = Integer.parseInt(DefaulteffMonth);
+        int Inpdate = Integer.parseInt(InputeffMonth);
+        int Diff = Defdate - Inpdate;
+        if (InputeffYear.equalsIgnoreCase(DefaulteffYear)) {
+            Submission_Page.PolicyEffectiveDate.click();
+            // Month Selection
+            if (Diff < 0) {
+                int i;
+                int j = 0;
+                for (i = Diff; i < j; i++) {
+                    Submission_Page.Calender_next_Button.click();
+                }
+            } else if (Diff > 0) {
+                for (int i = 0; i < Diff; i++) {
+                    Submission_Page.Calender_Forward_Button.click();
+                }
+            }
+            // Date Selection
+            WebElement pickdate = driver.findElement(By.xpath("//div[@role='presentation']/button[(contains(@tabindex, '0'))]//p[normalize-space()='" + InputeffDate + "']"));
+            pickdate.click();
+            Submission_Page.EffectiveOKButton.click();
+        } else {
+
+            Submission_Page.PolicyEffectiveDate.click();
+            Submission_Page.EffYearSeclector.click();
+            // Year Selection
+            List<WebElement> YearContainder = driver.findElements(By.xpath("//div[@class='MuiPickersYearSelection-container']/child::div"));
+            for (WebElement webelement : YearContainder) {
+                String Tempyear = webelement.getText();
+                if (InputeffYear.equalsIgnoreCase(Tempyear)) {
+                    webelement.click();
+                    break;
+                }
+            }
+        }
+        // MonthSelection
+        if (Diff < 0) {
+            int i;
+            int j = 0;
+            for (i = Diff; i < j; i++) {
+                Submission_Page.Calender_next_Button.click();
+            }
+        } else if (Diff > 0) {
+            for (int i = 0; i < Diff; i++) {
+                Submission_Page.Calender_Forward_Button.click();
+            }
+        }
+        //DateSelection
+        WebElement pickdate = driver.findElement(By.xpath("//div[@role='presentation']/button[(contains(@tabindex, '0'))]//p[normalize-space()='" + InputeffDate + "']"));
+        waitToBeClickable(pickdate,20);
+        pickdate.click();
